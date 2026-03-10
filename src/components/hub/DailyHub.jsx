@@ -9,16 +9,18 @@ import CompanyPanel from './CompanyPanel.jsx'
 import Nudges from './Nudges.jsx'
 import { SectionTitle } from '../layout/Atoms.jsx'
 
-export default function DailyHub({ role, onEventOpen, onLiveJoin, setView, onToast }) {
-  const data    = ROLE_DATA[role]
-  const today   = TODAY.getDate()
+export default function DailyHub({ role, onEventOpen, onLiveJoin, setView, onToast, activeTypes }) {
+  const data  = ROLE_DATA[role]
+  const today = TODAY.getDate()
 
   const upcoming = (data?.upcoming || [])
     .map(id => ALL_EVENTS.find(e => e.id === id))
-    .filter(Boolean)
+    .filter(e => e && (!activeTypes || activeTypes.includes(e.type)))
 
   const cultureToday = ALL_EVENTS.filter(e =>
-    e.day === today && (e.type === 'cumpleanos' || e.type === 'aniversario')
+    e.day === today &&
+    (e.type === 'cumpleanos' || e.type === 'aniversario') &&
+    (!activeTypes || activeTypes.includes(e.type))
   )
 
   return (
@@ -26,7 +28,7 @@ export default function DailyHub({ role, onEventOpen, onLiveJoin, setView, onToa
       <AlertBar role={role} />
       <HeroHub role={role} />
 
-      {/* Upcoming */}
+      {/* Upcoming events */}
       <div style={{marginBottom:20}}>
         <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10}}>
           <SectionTitle>
@@ -34,39 +36,34 @@ export default function DailyHub({ role, onEventOpen, onLiveJoin, setView, onToa
           </SectionTitle>
           <button
             onClick={() => setView('week')}
-            style={{fontSize:11, color:C.accent, fontWeight:600, background:'none', border:'none', cursor:'pointer', fontFamily:"'DM Sans', sans-serif"}}
-          >Ver semana completa →</button>
+            style={{fontSize:11,color:C.accent,fontWeight:600,background:'none',border:'none',cursor:'pointer',fontFamily:"'DM Sans',sans-serif"}}>
+            Ver semana completa →
+          </button>
         </div>
         {upcoming.map(e => (
           <UpCard key={e.id} event={e} onJoin={onLiveJoin} onOpen={onEventOpen} />
         ))}
+        {upcoming.length === 0 && (
+          <div style={{textAlign:'center',padding:'24px',background:'#fff',borderRadius:14,border:'1px solid #F1F5F9'}}>
+            <p style={{fontSize:22,marginBottom:6}}>🎉</p>
+            <p style={{fontSize:13,color:C.gray400}}>No hay eventos visibles con los filtros actuales.</p>
+          </div>
+        )}
       </div>
 
-      {/* Culture (colaborador only) */}
+      {/* Cumpleaños y aniversarios */}
       {role === 'colaborador' && cultureToday.length > 0 && (
         <div style={{marginBottom:20}}>
-          <SectionTitle>🎊 Cultura del equipo</SectionTitle>
+          <SectionTitle>🎊 Cumpleaños y aniversarios</SectionTitle>
           {cultureToday.map(e => (
             <CultureCard key={e.id} event={e} onOpen={onEventOpen} onToast={onToast} />
           ))}
         </div>
       )}
 
-      {/* Team (manager) */}
-      {role === 'manager' && (
-        <div style={{marginBottom:20}}>
-          <TeamGrid />
-        </div>
-      )}
+      {role === 'manager' && <div style={{marginBottom:20}}><TeamGrid /></div>}
+      {role === 'hr'      && <div style={{marginBottom:20}}><CompanyPanel /></div>}
 
-      {/* Company (hr) */}
-      {role === 'hr' && (
-        <div style={{marginBottom:20}}>
-          <CompanyPanel />
-        </div>
-      )}
-
-      {/* Nudges */}
       <Nudges role={role} />
     </div>
   )
