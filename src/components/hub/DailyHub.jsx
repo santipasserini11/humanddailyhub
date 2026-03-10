@@ -9,7 +9,7 @@ import CompanyPanel from './CompanyPanel.jsx'
 import Nudges from './Nudges.jsx'
 import { SectionTitle } from '../layout/Atoms.jsx'
 
-export default function DailyHub({ role, onEventOpen, onLiveJoin, setView }) {
+export default function DailyHub({ role, onEventOpen, onLiveJoin, setView, onToast }) {
   const data    = ROLE_DATA[role]
   const today   = TODAY.getDate()
 
@@ -47,7 +47,7 @@ export default function DailyHub({ role, onEventOpen, onLiveJoin, setView }) {
         <div style={{marginBottom:20}}>
           <SectionTitle>🎊 Cultura del equipo</SectionTitle>
           {cultureToday.map(e => (
-            <CultureCard key={e.id} event={e} onOpen={onEventOpen} />
+            <CultureCard key={e.id} event={e} onOpen={onEventOpen} onToast={onToast} />
           ))}
         </div>
       )}

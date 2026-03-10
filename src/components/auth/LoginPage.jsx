@@ -1,165 +1,284 @@
 import { useState } from 'react'
 import { useAuth } from '../../hooks/useAuth.jsx'
 import { C } from '../../constants/tokens.js'
-
-const DEMO_USERS = [
-  {
-    email:    'colaborador@humand.demo',
-    password: 'humand2026',
-    role:     'Colaborador',
-    name:     'Martina López',
-    dept:     'Producto',
-    icon:     '👤',
-    color:    C.accent,
-  },
-  {
-    email:    'manager@humand.demo',
-    password: 'humand2026',
-    role:     'Manager',
-    name:     'Diego Romero',
-    dept:     'Líder de equipo',
-    icon:     '👥',
-    color:    C.success,
-  },
-  {
-    email:    'hr@humand.demo',
-    password: 'humand2026',
-    role:     'RRHH',
-    name:     'Ana Pérez',
-    dept:     'People & Culture',
-    icon:     '🏢',
-    color:    C.violet,
-  },
-]
+import HumandLogo from '../layout/HumandLogo.jsx'
 
 export default function LoginPage() {
-  const { signIn, switchRole } = useAuth()
-  const [email, setEmail]     = useState('')
-  const [pass, setPass]       = useState('')
+  const { signIn } = useAuth()
+  const [email,   setEmail]   = useState('')
+  const [pass,    setPass]    = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError]     = useState('')
+  const [error,   setError]   = useState('')
+  const [step,    setStep]    = useState(0) // 0=email, 1=password
 
-  const handleLogin = async (e) => {
+  const handleContinue = async (e) => {
     e.preventDefault()
+    if (step === 0) { setStep(1); return }
+
     setLoading(true)
     setError('')
     const { error } = await signIn(email, pass)
-    if (error) setError('Credenciales incorrectas.')
-    setLoading(false)
-  }
-
-  const handleDemo = async (user) => {
-    setLoading(true)
-    setError('')
-    const { error } = await signIn(user.email, user.password)
-    if (error) {
-      // Supabase not configured — enter demo mode directly
-      switchRole(user.role.toLowerCase() === 'rrhh' ? 'hr' : user.role.toLowerCase())
-    }
+    if (error) setError('Usuario o contraseña incorrectos.')
     setLoading(false)
   }
 
   return (
     <div style={{
-      minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center',
-      background:`linear-gradient(135deg, ${C.primary} 0%, #243fa3 60%, ${C.accent} 100%)`,
-      padding:'20px', fontFamily:"'DM Sans', sans-serif",
+      minHeight: '100vh',
+      display: 'flex',
+      fontFamily: "'DM Sans', sans-serif",
     }}>
-      {/* Background decoration */}
-      <div style={{position:'fixed',top:'-10%',right:'-5%',width:'500px',height:'500px',borderRadius:'50%',background:'rgba(255,255,255,.04)',pointerEvents:'none'}}/>
-      <div style={{position:'fixed',bottom:'-15%',left:'-5%',width:'400px',height:'400px',borderRadius:'50%',background:'rgba(255,255,255,.03)',pointerEvents:'none'}}/>
 
-      <div style={{width:'100%',maxWidth:440, animation:'fadeUp .4s ease both'}}>
+      {/* ── LEFT — ilustración (lavanda, igual que humand.co) ── */}
+      <div style={{
+        flex: 1,
+        background: '#E4E9FF',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '48px',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {/* Círculo decorativo suave */}
+        <div style={{position:'absolute',top:'-60px',right:'-60px',width:'320px',height:'320px',borderRadius:'50%',background:'rgba(73,107,227,.06)',pointerEvents:'none'}}/>
+        <div style={{position:'absolute',bottom:'-80px',left:'-40px',width:'260px',height:'260px',borderRadius:'50%',background:'rgba(24,46,123,.04)',pointerEvents:'none'}}/>
 
-        {/* Logo */}
-        <div style={{textAlign:'center',marginBottom:36}}>
-          <div style={{display:'inline-flex',alignItems:'center',justifyContent:'center',
-            width:60,height:60,borderRadius:18,background:'rgba(255,255,255,.15)',
-            backdropFilter:'blur(8px)',marginBottom:14,border:'1.5px solid rgba(255,255,255,.2)'}}>
-            <span style={{fontFamily:"Comfortaa, sans-serif",fontWeight:700,fontSize:28,color:'#fff'}}>H</span>
-          </div>
-          <h1 style={{fontFamily:"Comfortaa, sans-serif",fontWeight:700,fontSize:26,color:'#fff',letterSpacing:'-0.5px'}}>
-            Humand
-          </h1>
-          <p style={{color:'rgba(255,255,255,.6)',fontSize:13,marginTop:4,fontFamily:"'Playfair Display', serif",fontStyle:'italic'}}>
-            Smart Calendar
-          </p>
-        </div>
-
-        {/* Card */}
-        <div style={{background:'rgba(255,255,255,.97)',borderRadius:24,padding:'32px 28px',
-          boxShadow:'0 30px 80px rgba(0,0,0,.25)'}}>
-
-          <h2 style={{fontSize:18,fontWeight:700,color:C.primary,marginBottom:6}}>Iniciar sesión</h2>
-          <p style={{fontSize:12,color:C.gray400,marginBottom:24}}>Ingresá con tu cuenta o usá un usuario de demo</p>
-
-          <form onSubmit={handleLogin}>
-            <div style={{marginBottom:12}}>
-              <label style={{display:'block',fontSize:11,fontWeight:700,color:C.gray500,marginBottom:5,textTransform:'uppercase',letterSpacing:'.05em'}}>Email</label>
-              <input
-                type="email" value={email} onChange={e=>setEmail(e.target.value)}
-                placeholder="tu@empresa.com"
-                style={{width:'100%',padding:'10px 14px',border:'1.5px solid #E2E8F0',borderRadius:10,
-                  fontSize:13,color:C.gray700,background:'#FAFAFA'}}
-              />
-            </div>
-            <div style={{marginBottom:16}}>
-              <label style={{display:'block',fontSize:11,fontWeight:700,color:C.gray500,marginBottom:5,textTransform:'uppercase',letterSpacing:'.05em'}}>Contraseña</label>
-              <input
-                type="password" value={pass} onChange={e=>setPass(e.target.value)}
-                placeholder="••••••••"
-                style={{width:'100%',padding:'10px 14px',border:'1.5px solid #E2E8F0',borderRadius:10,
-                  fontSize:13,color:C.gray700,background:'#FAFAFA'}}
-              />
-            </div>
-            {error && <p style={{fontSize:12,color:C.danger,marginBottom:12,fontWeight:500}}>{error}</p>}
-            <button type="submit" disabled={loading}
-              style={{width:'100%',padding:'11px',background:C.primary,color:'#fff',
-                border:'none',borderRadius:12,fontSize:13,fontWeight:700,cursor:'pointer',
-                opacity:loading?.6:1,transition:'all .15s'}}>
-              {loading ? 'Ingresando...' : 'Ingresar →'}
-            </button>
-          </form>
-
-          {/* Divider */}
-          <div style={{display:'flex',alignItems:'center',gap:10,margin:'20px 0'}}>
-            <div style={{flex:1,height:1,background:'#E2E8F0'}}/>
-            <span style={{fontSize:11,color:C.gray400,fontWeight:600}}>o ingresá como demo</span>
-            <div style={{flex:1,height:1,background:'#E2E8F0'}}/>
-          </div>
-
-          {/* Demo cards */}
-          <div style={{display:'flex',flexDirection:'column',gap:8}}>
-            {DEMO_USERS.map(u => (
-              <button key={u.email} onClick={()=>handleDemo(u)} disabled={loading}
-                className="card-hover"
-                style={{display:'flex',alignItems:'center',gap:12,padding:'11px 14px',
-                  border:`1.5px solid ${u.color}25`,borderRadius:12,background:'#FAFAFA',
-                  cursor:'pointer',textAlign:'left',transition:'all .15s',width:'100%'}}>
-                <div style={{width:38,height:38,borderRadius:12,background:u.color+'18',
-                  display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,flexShrink:0}}>
-                  {u.icon}
-                </div>
-                <div style={{flex:1,minWidth:0}}>
-                  <p style={{fontSize:12,fontWeight:700,color:C.primary}}>{u.name}</p>
-                  <p style={{fontSize:11,color:u.color,fontWeight:600}}>{u.role} · {u.dept}</p>
-                </div>
-                <span style={{fontSize:11,color:u.color,fontWeight:700}}>Entrar →</span>
-              </button>
+        {/* Mockup del calendario */}
+        <div style={{
+          background:'#fff',
+          borderRadius:20,
+          boxShadow:'0 20px 60px rgba(24,46,123,.15)',
+          width:'100%',
+          maxWidth:440,
+          overflow:'hidden',
+          position:'relative',
+          zIndex:1,
+        }}>
+          {/* Mockup topbar */}
+          <div style={{background:C.primary,padding:'10px 16px',display:'flex',alignItems:'center',gap:10}}>
+            <div style={{color:'#fff',fontFamily:'Comfortaa, sans-serif',fontWeight:700,fontSize:14}}>humand</div>
+            <div style={{flex:1}}/>
+            {['Daily Hub','Semana','Mes'].map(t => (
+              <div key={t} style={{
+                fontSize:10,color:'rgba(255,255,255,.6)',
+                padding:'3px 8px',borderRadius:6,
+                background: t==='Daily Hub' ? 'rgba(255,255,255,.2)' : 'transparent',
+                fontWeight: t==='Daily Hub' ? 700 : 400,
+              }}>{t}</div>
             ))}
           </div>
 
-          <p style={{textAlign:'center',fontSize:10,color:C.gray400,marginTop:18,lineHeight:1.5}}>
-            Contraseña demo: <code style={{background:'#F1F5F9',padding:'1px 5px',borderRadius:4}}>humand2026</code>
-          </p>
+          {/* Mockup content */}
+          <div style={{padding:'14px 16px',background:'#F8FAFF'}}>
+            {/* Hero mini */}
+            <div style={{
+              background:`linear-gradient(135deg, ${C.primary}, ${C.accent})`,
+              borderRadius:12, padding:'12px 14px', marginBottom:10,
+              display:'flex', alignItems:'center', justifyContent:'space-between',
+            }}>
+              <div>
+                <div style={{color:'rgba(255,255,255,.6)',fontSize:9,marginBottom:3}}>Buen día, Martina ✨</div>
+                <div style={{color:'#fff',fontWeight:700,fontSize:12}}>Martes 10 de marzo · 2026</div>
+              </div>
+              <div style={{color:'#fff',fontWeight:700,fontSize:18}}>10:24</div>
+            </div>
+
+            {/* Stats row */}
+            <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:6,marginBottom:10}}>
+              {[
+                {icon:'🎥',val:2,label:'Reuniones'},
+                {icon:'📚',val:1,label:'Cursos'},
+                {icon:'✅',val:3,label:'Tareas'},
+                {icon:'🎂',val:1,label:'Cumples'},
+              ].map((s,i) => (
+                <div key={i} style={{background:'#fff',borderRadius:8,padding:'8px 4px',textAlign:'center',border:'1px solid #E8EEFF'}}>
+                  <div style={{fontSize:14}}>{s.icon}</div>
+                  <div style={{fontWeight:800,fontSize:13,color:C.primary}}>{s.val}</div>
+                  <div style={{fontSize:8,color:'#94A3B8',marginTop:1}}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Event cards mini */}
+            {[
+              {color:'#EEF2FF',border:C.accent,icon:'🎥',text:'Sync producto semanal',time:'10:00'},
+              {color:'#D1FAE5',border:'#059669',icon:'📚',text:'Comunicación asertiva',time:'14:00'},
+              {color:'#FCE7F3',border:'#DB2777',icon:'🎂',text:'Cumpleaños Juan López',time:'Hoy'},
+            ].map((e,i) => (
+              <div key={i} style={{
+                background:e.color, border:`1px solid ${e.border}22`,
+                borderRadius:8, padding:'7px 10px',
+                display:'flex',alignItems:'center',gap:7,
+                marginBottom:5,
+              }}>
+                <span style={{fontSize:12}}>{e.icon}</span>
+                <span style={{flex:1,fontSize:10,fontWeight:600,color:'#334155'}}>{e.text}</span>
+                <span style={{fontSize:9,color:'#94A3B8'}}>{e.time}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <p style={{textAlign:'center',color:'rgba(255,255,255,.4)',fontSize:11,marginTop:20}}>
-          Humand Smart Calendar · Hackathon MVP 2026
+        {/* Tagline debajo del mockup */}
+        <p style={{
+          marginTop:24, fontSize:13, color:'#6B7FCC',
+          fontWeight:500, textAlign:'center', maxWidth:320,
+          lineHeight:1.6, position:'relative', zIndex:1,
+        }}>
+          Organizá tu día laboral, conectá con tu equipo y no te perdas nada importante.
         </p>
       </div>
 
-      <style>{`@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}`}</style>
+      {/* ── RIGHT — formulario (blanco, igual que humand.co) ── */}
+      <div style={{
+        width: 480,
+        flexShrink: 0,
+        background: '#fff',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '60px 56px',
+        overflowY: 'auto',
+      }}>
+        {/* Logo */}
+        <div style={{marginBottom:40}}>
+          <HumandLogo size="xl" dark />
+        </div>
+
+        {/* Título */}
+        <h2 style={{
+          fontSize:26, fontWeight:800,
+          color:'#111827',
+          lineHeight:1.25, marginBottom:8,
+        }}>
+          Inicia sesión en el<br/>Smart Calendar
+        </h2>
+        <p style={{fontSize:14, color:'#9CA3AF', marginBottom:36}}>
+          Ingresá con tu cuenta de Humand
+        </p>
+
+        {/* Form */}
+        <form onSubmit={handleContinue}>
+          <div style={{marginBottom:16}}>
+            <label style={{
+              display:'block', fontSize:14, fontWeight:600,
+              color:'#374151', marginBottom:7,
+            }}>
+              Usuario
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="tu@empresa.com"
+              autoFocus
+              style={{
+                width:'100%', padding:'13px 16px',
+                border:'1.5px solid #E5E7EB',
+                borderRadius:10, fontSize:14,
+                color:'#111827', background:'#fff',
+                boxSizing:'border-box',
+                transition:'border-color .15s',
+              }}
+            />
+          </div>
+
+          {step === 1 && (
+            <div style={{marginBottom:16, animation:'fadeUp .2s ease both'}}>
+              <label style={{display:'block',fontSize:14,fontWeight:600,color:'#374151',marginBottom:7}}>
+                Contraseña
+              </label>
+              <input
+                type="password"
+                value={pass}
+                onChange={e => setPass(e.target.value)}
+                placeholder="••••••••"
+                autoFocus
+                style={{
+                  width:'100%', padding:'13px 16px',
+                  border:'1.5px solid #E5E7EB',
+                  borderRadius:10, fontSize:14,
+                  color:'#111827', background:'#fff',
+                  boxSizing:'border-box',
+                }}
+              />
+            </div>
+          )}
+
+          {error && (
+            <p style={{fontSize:13,color:'#DC2626',marginBottom:14,fontWeight:500}}>
+              {error}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading || !email}
+            style={{
+              width:'100%', padding:'14px',
+              background: C.accent,
+              color:'#fff', border:'none',
+              borderRadius:10, fontSize:15,
+              fontWeight:700, cursor: email ? 'pointer' : 'not-allowed',
+              opacity: (!email || loading) ? .5 : 1,
+              fontFamily:"'DM Sans', sans-serif",
+              transition:'all .15s',
+            }}
+            onMouseEnter={e => { if(email && !loading) e.currentTarget.style.background = C.primary }}
+            onMouseLeave={e => { e.currentTarget.style.background = C.accent }}
+          >
+            {loading ? 'Ingresando...' : step === 0 ? 'Continuar' : 'Ingresar →'}
+          </button>
+        </form>
+
+        {/* Separador */}
+        <div style={{display:'flex',alignItems:'center',gap:12,margin:'28px 0'}}>
+          <div style={{flex:1,height:1,background:'#F3F4F6'}}/>
+          <span style={{fontSize:13,color:'#9CA3AF'}}>O inicia sesión con</span>
+          <div style={{flex:1,height:1,background:'#F3F4F6'}}/>
+        </div>
+
+        {/* SSO buttons (decorativos) */}
+        <div style={{display:'flex', gap:12}}>
+          {[
+            { label:'Microsoft', color:'#F3F4F6', icon:'🪟' },
+            { label:'Google',    color:'#F3F4F6', icon:'G'  },
+            { label:'Okta',      color:'#F3F4F6', icon:'⚙'  },
+          ].map(s => (
+            <button key={s.label}
+              style={{
+                flex:1, padding:'12px 8px',
+                background:s.color, border:'1.5px solid #E5E7EB',
+                borderRadius:10, cursor:'pointer',
+                display:'flex', flexDirection:'column',
+                alignItems:'center', gap:5,
+                fontFamily:"'DM Sans', sans-serif",
+                transition:'all .15s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.borderColor='#D1D5DB'}
+              onMouseLeave={e => e.currentTarget.style.borderColor='#E5E7EB'}
+            >
+              <span style={{fontSize:18}}>{s.icon}</span>
+              <span style={{fontSize:12,color:'#374151',fontWeight:500}}>{s.label}</span>
+            </button>
+          ))}
+        </div>
+
+        <p style={{textAlign:'center',fontSize:11,color:'#D1D5DB',marginTop:32}}>
+          © 2026 Humand · Smart Calendar Hackathon
+        </p>
+      </div>
+
+      {/* Mobile responsive */}
+      <style>{`
+        @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        @media (max-width: 768px) {
+          div[data-login-left] { display: none !important; }
+          div[data-login-right] { width: 100% !important; padding: 40px 28px !important; }
+        }
+      `}</style>
     </div>
   )
 }

@@ -64,6 +64,23 @@ export default function HeroHub({ role }) {
             </div>
           ))}
         </div>
+
+        {/* Planning nudge */}
+        <div style={{
+          marginTop:14,
+          background:'rgba(255,255,255,.12)',
+          backdropFilter:'blur(4px)',
+          borderRadius:12, padding:'10px 14px',
+          display:'flex', alignItems:'center', gap:10,
+          animation:'fadeUp .4s .25s ease both',
+          cursor:'pointer',
+        }}>
+          <span style={{fontSize:16}}>✨</span>
+          <p style={{color:'rgba(255,255,255,.88)', fontSize:12, fontWeight:500, lineHeight:1.4, flex:1}}>
+            <strong style={{color:'#fff'}}>Empezá a planear tu día.</strong> Tenés {data?.stats?.[0]?.val || 2} eventos programados. ¿Todo listo?
+          </p>
+          <span style={{color:'#93C5FD', fontSize:11, fontWeight:700, flexShrink:0}}>Ver agenda →</span>
+        </div>
       </div>
     </div>
   )

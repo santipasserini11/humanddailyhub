@@ -87,3 +87,45 @@ input:focus, select:focus, textarea:focus {
   background: #496BE3;
   border-radius: 3px 0 0 3px;
 }
+
+/* ── Mobile responsive ── */
+@media (max-width: 768px) {
+  /* App shell */
+  body { overflow: auto; }
+  html, body, #root { height: auto; min-height: 100%; overflow: auto; }
+
+  /* TopBar */
+  .topbar-logo-text { display: none; }
+
+  /* Hide right sidebar on mobile */
+  .right-sidebar { display: none !important; }
+
+  /* Main content full width */
+  .main-scroll { padding: 12px !important; }
+
+  /* Daily Hub max-width */
+  .hub-container { max-width: 100% !important; }
+
+  /* Hero hub */
+  .hero-stats { grid-template-columns: repeat(2,1fr) !important; }
+
+  /* Team grid */
+  .team-grid { grid-template-columns: repeat(2,1fr) !important; }
+
+  /* Company panel */
+  .company-grid { grid-template-columns: 1fr 1fr !important; }
+
+  /* Event cards */
+  .up-card-actions { flex-direction: column; gap: 4px !important; }
+
+  /* Week/month views */
+  .week-grid { overflow-x: auto !important; min-width: 600px; }
+
+  /* TopBar tabs scroll */
+  .topbar-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .topbar-tabs::-webkit-scrollbar { display: none; }
+}
+
+@media (max-width: 480px) {
+  .role-switcher span { display: none; } /* Solo íconos en pantallas chicas */
+}
