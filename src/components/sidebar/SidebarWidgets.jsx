@@ -50,22 +50,43 @@ export function MiniCal() {
   )
 }
 
-/* ── Upcoming Lives ── */
+/* ── Lives de hoy ── */
 export function SidebarLives({ events, onJoin }) {
-  const lives = events.filter(e => e.live).slice(0,4)
+  const today = TODAY.getDate()
+  const now = new Date()
+  const currentHour = now.getHours() + now.getMinutes() / 60
+
+  // Solo lives del día de hoy
+  const lives = events
+    .filter(e => e.live && e.day === today)
+    .sort((a,b) => a.startH - b.startH)
+    .slice(0,4)
+
+  const formatTime = (h) => {
+    const hours = Math.floor(h)
+    const mins = h % 1 === 0.5 ? '30' : '00'
+    return `${String(hours).padStart(2,'0')}:${mins}`
+  }
+
+  if (lives.length === 0) return null
 
   return (
     <div style={{background:C.white, borderRadius:14, border:'1px solid #E2E8F0', padding:14, marginBottom:12}}>
       <div style={{display:'flex', alignItems:'center', gap:5, marginBottom:10}}>
         <span className="live-dot" style={{width:7,height:7,borderRadius:'50%',background:C.danger,display:'inline-block'}}/>
-        <span style={{fontSize:11, fontWeight:700, color:C.primary}}>Próximos LIVES</span>
+        <span style={{fontSize:11, fontWeight:700, color:C.primary}}>Lives de hoy</span>
       </div>
       {lives.map(e => {
         const c = EVENT_CFG[e.type] || EVENT_CFG.livestream
+        const endH = e.endH || (e.startH + 1)
+        const hasStarted = currentHour >= e.startH
+        const isOngoing = hasStarted && currentHour < endH
+
         return (
           <div key={e.id}
             style={{
-              background:c.bg, border:`1px solid ${c.color}25`,
+              background: isOngoing ? `${C.danger}10` : c.bg, 
+              border: isOngoing ? `1px solid ${C.danger}30` : `1px solid ${c.color}25`,
               borderRadius:10, padding:'9px 10px', marginBottom:7, cursor:'pointer',
               transition:'all .15s',
             }}
@@ -73,21 +94,22 @@ export function SidebarLives({ events, onJoin }) {
             onMouseEnter={ev => ev.currentTarget.style.opacity='.85'}
             onMouseLeave={ev => ev.currentTarget.style.opacity='1'}
           >
-            <p style={{fontSize:11,fontWeight:700,color:c.color,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{e.title}</p>
-            <div style={{display:'flex',alignItems:'center',gap:4,marginTop:2}}>
-              <IconLivestream size={10} color={C.gray400} />
-              <span style={{fontSize:9,color:C.gray400}}>{e.liveUrl}</span>
-            </div>
-            <button className="btn"
-              onClick={ev => { ev.stopPropagation(); onJoin(e) }}
-              style={{
-                marginTop:6, width:'100%', background:C.danger, color:'#fff',
-                borderRadius:7, padding:'5px 0', fontSize:10, fontWeight:700,
-                display:'flex', alignItems:'center', justifyContent:'center', gap:4,
-              }}
-            >
-              <span className="live-dot">●</span> Unirse
-            </button>
+            <p style={{fontSize:11,fontWeight:700,color: isOngoing ? C.danger : c.color,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{e.title}</p>
+            <p style={{fontSize:10,color:C.gray400,marginTop:2}}>
+              {formatTime(e.startH)} - {formatTime(endH)}
+            </p>
+            {isOngoing && (
+              <button className="btn"
+                onClick={ev => { ev.stopPropagation(); onJoin(e) }}
+                style={{
+                  marginTop:6, width:'100%', background:C.danger, color:'#fff',
+                  borderRadius:7, padding:'5px 0', fontSize:10, fontWeight:700,
+                  display:'flex', alignItems:'center', justifyContent:'center', gap:4,
+                }}
+              >
+                <span className="live-dot">●</span> Unirse
+              </button>
+            )}
           </div>
         )
       })}
