@@ -59,7 +59,7 @@ export default function CreateModal({ role, onClose }) {
         {/* Header */}
         <div style={{padding:'20px 22px', borderBottom:'1px solid #F1F5F9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
           <div>
-            <h3 style={{fontSize:16,fontWeight:800,color:C.primary,fontFamily:"'Playfair Display', serif"}}>Agregar al calendario</h3>
+            <h3 style={{fontSize:16,fontWeight:700,color:C.primary}}>Agregar al calendario</h3>
             <p style={{fontSize:11,color:C.gray400,marginTop:2}}>¿Qué querés crear?</p>
           </div>
           <button onClick={onClose} style={{width:28,height:28,borderRadius:8,border:'none',background:'#F1F5F9',cursor:'pointer',color:C.gray500,fontSize:15,display:'flex',alignItems:'center',justifyContent:'center'}}>×</button>

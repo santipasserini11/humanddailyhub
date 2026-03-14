@@ -60,8 +60,7 @@ export default function EventDrawer({ event, onClose, onJoin }) {
             }}>×</button>
           </div>
           <h3 style={{
-            fontSize:17, fontWeight:800, color:C.primary, lineHeight:1.2,
-            fontFamily:"'Playfair Display', serif",
+            fontSize:17, fontWeight:700, color:C.primary, lineHeight:1.2,
           }}>{event.title}</h3>
           <p style={{fontSize:12, color:C.gray500, marginTop:5}}>
             {event.allDay ? '📅 Todo el día' : `🕐 ${timeStr(event.startH)} — ${timeStr(event.endH)}`}

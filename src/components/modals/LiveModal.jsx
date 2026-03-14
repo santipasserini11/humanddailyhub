@@ -90,7 +90,7 @@ export default function LiveModal({ event, onClose }) {
           {!joined && !joining && (
             <div style={{textAlign:'center', position:'relative', zIndex:2}}>
               <div style={{width:72,height:72,borderRadius:20,background:'rgba(220,38,38,.15)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:34,margin:'0 auto 12px'}} className="live-dot">📡</div>
-              <h3 style={{color:'#fff',fontSize:16,fontWeight:700,marginBottom:5,fontFamily:"'Playfair Display', serif"}}>{event.title}</h3>
+              <h3 style={{color:'#fff',fontSize:16,fontWeight:700,marginBottom:5}}>{event.title}</h3>
               <p style={{color:'#94A3B8',fontSize:12,marginBottom:18}}>{event.liveUrl}</p>
               <button onClick={handleJoin} className="btn"
                 style={{background:C.danger,color:'#fff',borderRadius:12,padding:'12px 36px',fontSize:14,fontWeight:700}}>
