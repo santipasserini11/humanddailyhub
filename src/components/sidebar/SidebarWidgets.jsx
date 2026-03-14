@@ -92,35 +92,64 @@ export function SidebarLives({ events, onJoin }) {
 }
 
 /* ── Today's agenda ── */
-export function SidebarAgenda({ events, onOpen }) {
+export function SidebarAgenda({ events, onOpen, onJoin }) {
   const today = TODAY.getDate()
+  const now = new Date()
+  const currentHour = now.getHours() + now.getMinutes() / 60
+
   const sorted = events
     .filter(e => e.day === today && !e.allDay)
     .sort((a,b) => a.startH - b.startH)
 
+  const formatTime = (h) => {
+    const hours = Math.floor(h)
+    const mins = h % 1 === 0.5 ? '30' : '00'
+    return `${String(hours).padStart(2,'0')}:${mins}`
+  }
+
   return (
     <div style={{background:C.white, borderRadius:14, border:'1px solid #E2E8F0', padding:14, marginBottom:12}}>
-      <p style={{fontSize:11, fontWeight:700, color:C.primary, marginBottom:10}}>📋 Agenda de hoy</p>
+      <p style={{fontSize:11, fontWeight:700, color:C.primary, marginBottom:10}}>Agenda de hoy</p>
+      {sorted.length === 0 && (
+        <p style={{fontSize:11, color:C.gray400, textAlign:'center', padding:'8px 0'}}>Sin eventos</p>
+      )}
       {sorted.map(e => {
         const c = EVENT_CFG[e.type] || EVENT_CFG.reunion
+        const hasStarted = currentHour >= e.startH
+        const endH = e.endH || (e.startH + 1)
+        const isOngoing = hasStarted && currentHour < endH
+
         return (
           <div key={e.id}
             onClick={() => onOpen(e)}
             style={{
               display:'flex', alignItems:'center', gap:8,
-              padding:'5px 4px', borderRadius:7, cursor:'pointer',
-              transition:'all .12s', marginBottom:2,
+              padding:'6px 6px', borderRadius:8, cursor:'pointer',
+              transition:'all .12s', marginBottom:4,
+              background: isOngoing ? `${c.color}10` : 'transparent',
             }}
-            onMouseEnter={ev => ev.currentTarget.style.background='#F8FAFC'}
-            onMouseLeave={ev => ev.currentTarget.style.background='transparent'}
+            onMouseEnter={ev => ev.currentTarget.style.background= isOngoing ? `${c.color}15` : '#F8FAFC'}
+            onMouseLeave={ev => ev.currentTarget.style.background= isOngoing ? `${c.color}10` : 'transparent'}
           >
-            <div style={{width:3, height:30, borderRadius:3, background:c.color, flexShrink:0}}/>
+            <div style={{width:3, height:36, borderRadius:3, background:c.color, flexShrink:0}}/>
             <div style={{flex:1, minWidth:0}}>
               <p style={{fontSize:11,fontWeight:600,color:C.primary,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{e.title}</p>
-              <p style={{fontSize:9,color:C.gray400}}>
-                {String(Math.floor(e.startH)).padStart(2,'0')}:{e.startH%1===0.5?'30':'00'}
+              <p style={{fontSize:10,color:C.gray400}}>
+                {formatTime(e.startH)} - {formatTime(endH)}
               </p>
             </div>
+            {hasStarted && isOngoing && e.liveUrl && onJoin && (
+              <button
+                onClick={(ev) => { ev.stopPropagation(); onJoin(e) }}
+                style={{
+                  background:C.danger, color:'#fff', border:'none',
+                  borderRadius:6, padding:'4px 8px', fontSize:9, fontWeight:600,
+                  cursor:'pointer', flexShrink:0,
+                }}
+              >
+                Unirse
+              </button>
+            )}
           </div>
         )
       })}

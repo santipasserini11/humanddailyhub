@@ -78,7 +78,7 @@ function CalendarApp() {
         <div style={{ width:220, flexShrink:0, overflowY:'auto', padding:'20px 14px', borderLeft:'1px solid #E2E8F0', background:'#fff' }}>
           <MiniCal />
           <SidebarLives events={ALL_EVENTS.filter(e => e.live)} onJoin={setLiveEvent} />
-          <SidebarAgenda events={ALL_EVENTS} onOpen={setSelectedEvent} />
+          <SidebarAgenda events={ALL_EVENTS} onOpen={setSelectedEvent} onJoin={setLiveEvent} />
         </div>
       </div>
 

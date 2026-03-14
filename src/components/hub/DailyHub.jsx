@@ -23,16 +23,9 @@ export default function DailyHub({ role, onEventOpen, onLiveJoin, setView, onToa
     <div style={{maxWidth:720, margin:'0 auto', paddingTop: 16}} className="anim-fade">
       {/* Upcoming events */}
       <div style={{marginBottom:24}}>
-        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
-          <h2 style={{fontSize:16, fontWeight:600, color:C.gray900, margin:0}}>
-            {role === 'hr' ? 'Eventos de empresa hoy' : 'Tu agenda de hoy'}
-          </h2>
-          <button
-            onClick={() => setView('week')}
-            style={{fontSize:12,color:C.accent,fontWeight:500,background:'none',border:'none',cursor:'pointer'}}>
-            Ver semana
-          </button>
-        </div>
+        <h2 style={{fontSize:16, fontWeight:600, color:C.gray900, marginBottom:12}}>
+          {role === 'hr' ? 'Eventos de empresa hoy' : 'Tu agenda de hoy'}
+        </h2>
         {upcoming.map(e => (
           <UpCard key={e.id} event={e} onJoin={onLiveJoin} onOpen={onEventOpen} />
         ))}
