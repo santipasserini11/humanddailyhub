@@ -10,7 +10,7 @@ import MonthView from './components/calendar/MonthView.jsx'
 import EventDrawer from './components/modals/EventDrawer.jsx'
 import LiveModal from './components/modals/LiveModal.jsx'
 import CreateModal from './components/modals/CreateModal.jsx'
-import { MiniCal, SidebarLives, SidebarAgenda } from './components/sidebar/SidebarWidgets.jsx'
+import { MiniCal, SidebarAgenda } from './components/sidebar/SidebarWidgets.jsx'
 import { ALL_EVENTS } from './constants/data.js'
 import { C } from './constants/tokens.js'
 import { getWeekDates, fmt } from './constants/utils.js'
@@ -77,8 +77,7 @@ function CalendarApp() {
         {/* Right sidebar */}
         <div style={{ width:220, flexShrink:0, overflowY:'auto', padding:'20px 14px', borderLeft:'1px solid #E2E8F0', background:'#fff' }}>
           <MiniCal />
-          <SidebarLives events={ALL_EVENTS.filter(e => e.live)} onJoin={setLiveEvent} />
-          <SidebarAgenda events={ALL_EVENTS} onOpen={setSelectedEvent} onJoin={setLiveEvent} />
+          <SidebarAgenda events={ALL_EVENTS} onOpen={setSelectedEvent} onJoin={setLiveEvent} onToast={fireToast} />
         </div>
       </div>
 

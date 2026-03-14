@@ -118,19 +118,82 @@ export function SidebarLives({ events, onJoin }) {
 }
 
 /* ── Today's agenda ── */
-export function SidebarAgenda({ events, onOpen, onJoin }) {
+export function SidebarAgenda({ events, onOpen, onJoin, onToast }) {
   const today = TODAY.getDate()
   const now = new Date()
   const currentHour = now.getHours() + now.getMinutes() / 60
 
+  // Todos los eventos del dia, ordenados por hora (allDay primero, luego por startH)
   const sorted = events
-    .filter(e => e.day === today && !e.allDay)
-    .sort((a,b) => a.startH - b.startH)
+    .filter(e => e.day === today)
+    .sort((a,b) => {
+      if (a.allDay && !b.allDay) return -1
+      if (!a.allDay && b.allDay) return 1
+      return (a.startH || 0) - (b.startH || 0)
+    })
 
   const formatTime = (h) => {
     const hours = Math.floor(h)
     const mins = h % 1 === 0.5 ? '30' : '00'
     return `${String(hours).padStart(2,'0')}:${mins}`
+  }
+
+  // Determinar el boton de accion segun tipo de evento
+  const getActionButton = (e, c, isOngoing) => {
+    if (!isOngoing && !e.allDay) return null
+
+    // Reuniones con link - Unirse
+    if ((e.type === 'reunion' || e.type === 'livestream' || e.live) && e.liveUrl && onJoin) {
+      return (
+        <button
+          onClick={(ev) => { ev.stopPropagation(); onJoin(e) }}
+          style={{
+            background:C.danger, color:'#fff', border:'none',
+            borderRadius:6, padding:'4px 8px', fontSize:9, fontWeight:600,
+            cursor:'pointer', flexShrink:0,
+          }}
+        >
+          Unirse
+        </button>
+      )
+    }
+
+    // Cumpleanos/Aniversario - Felicitar
+    if ((e.type === 'cumpleanos' || e.type === 'aniversario') && e.allDay) {
+      return (
+        <button
+          onClick={(ev) => { 
+            ev.stopPropagation()
+            if (onToast) onToast('Felicitacion enviada', null, C.success)
+          }}
+          style={{
+            background:c.color, color:'#fff', border:'none',
+            borderRadius:6, padding:'4px 8px', fontSize:9, fontWeight:600,
+            cursor:'pointer', flexShrink:0,
+          }}
+        >
+          Felicitar
+        </button>
+      )
+    }
+
+    // Capacitacion - Ver
+    if (e.type === 'capacitacion' && isOngoing) {
+      return (
+        <button
+          onClick={(ev) => { ev.stopPropagation(); onOpen(e) }}
+          style={{
+            background:c.color, color:'#fff', border:'none',
+            borderRadius:6, padding:'4px 8px', fontSize:9, fontWeight:600,
+            cursor:'pointer', flexShrink:0,
+          }}
+        >
+          Ver
+        </button>
+      )
+    }
+
+    return null
   }
 
   return (
@@ -141,9 +204,9 @@ export function SidebarAgenda({ events, onOpen, onJoin }) {
       )}
       {sorted.map(e => {
         const c = EVENT_CFG[e.type] || EVENT_CFG.reunion
-        const hasStarted = currentHour >= e.startH
-        const endH = e.endH || (e.startH + 1)
-        const isOngoing = hasStarted && currentHour < endH
+        const endH = e.endH || (e.startH ? e.startH + 1 : 24)
+        const hasStarted = e.startH ? currentHour >= e.startH : true
+        const isOngoing = e.allDay || (hasStarted && currentHour < endH)
 
         return (
           <div key={e.id}
@@ -152,30 +215,21 @@ export function SidebarAgenda({ events, onOpen, onJoin }) {
               display:'flex', alignItems:'center', gap:8,
               padding:'6px 6px', borderRadius:8, cursor:'pointer',
               transition:'all .12s', marginBottom:4,
-              background: isOngoing ? `${c.color}10` : 'transparent',
+              background: isOngoing && !e.allDay ? `${c.color}10` : 'transparent',
             }}
-            onMouseEnter={ev => ev.currentTarget.style.background= isOngoing ? `${c.color}15` : '#F8FAFC'}
-            onMouseLeave={ev => ev.currentTarget.style.background= isOngoing ? `${c.color}10` : 'transparent'}
+            onMouseEnter={ev => ev.currentTarget.style.background= isOngoing && !e.allDay ? `${c.color}15` : '#F8FAFC'}
+            onMouseLeave={ev => ev.currentTarget.style.background= isOngoing && !e.allDay ? `${c.color}10` : 'transparent'}
           >
             <div style={{width:3, height:36, borderRadius:3, background:c.color, flexShrink:0}}/>
             <div style={{flex:1, minWidth:0}}>
-              <p style={{fontSize:11,fontWeight:600,color:C.primary,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{e.title}</p>
+              <p style={{fontSize:11,fontWeight:600,color:C.primary,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+                {e.title || e.person}
+              </p>
               <p style={{fontSize:10,color:C.gray400}}>
-                {formatTime(e.startH)} - {formatTime(endH)}
+                {e.allDay ? 'Todo el dia' : `${formatTime(e.startH)} - ${formatTime(endH)}`}
               </p>
             </div>
-            {hasStarted && isOngoing && e.liveUrl && onJoin && (
-              <button
-                onClick={(ev) => { ev.stopPropagation(); onJoin(e) }}
-                style={{
-                  background:C.danger, color:'#fff', border:'none',
-                  borderRadius:6, padding:'4px 8px', fontSize:9, fontWeight:600,
-                  cursor:'pointer', flexShrink:0,
-                }}
-              >
-                Unirse
-              </button>
-            )}
+            {getActionButton(e, c, isOngoing)}
           </div>
         )
       })}
