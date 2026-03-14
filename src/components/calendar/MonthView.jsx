@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { C, WEEK_DAYS, TODAY, EVENT_CFG } from '../../constants/tokens.js'
+import { EventIcon, IconVacacion } from '../icons/HumandIcons.jsx'
 
 // Group categories for monthly display
 const MONTH_GROUPS = [
@@ -44,7 +45,7 @@ function DayModal({ day, events, onClose, onOpen }) {
                   opacity: past ? .6 : 1,
                   marginBottom:5,
                 }}>
-                <span style={{fontSize:16}}>{c.icon}</span>
+                <EventIcon type={e.type} size={16} color={past ? C.gray400 : c.color} />
                 <div style={{flex:1}}>
                   <p style={{fontSize:12,fontWeight:700,color: past ? C.gray400 : C.primary}}>{e.title || e.person}</p>
                   {e.startH && <p style={{fontSize:10,color:C.gray400}}>{String(Math.floor(e.startH)).padStart(2,'0')}:{e.startH%1===.5?'30':'00'}</p>}
@@ -151,7 +152,7 @@ export default function MonthView({ events, layers, onOpen }) {
                     display:'flex',alignItems:'center',gap:2,
                     overflow:'hidden',whiteSpace:'nowrap',
                   }}>
-                    <span>{c.icon}</span>
+                    <EventIcon type={e.type} size={9} color={past ? '#94A3B8' : c.color} />
                     <span style={{overflow:'hidden',textOverflow:'ellipsis'}}>
                       {e.person || e.title}
                     </span>
@@ -168,7 +169,7 @@ export default function MonthView({ events, layers, onOpen }) {
                   fontWeight:700, marginBottom:2,
                   overflow:'hidden',whiteSpace:'nowrap',
                 }}>
-                  🏖️ {e.person?.split(' ')[0]}
+                  <IconVacacion size={9} color={past ? '#94A3B8' : EVENT_CFG.vacacion.color} /> {e.person?.split(' ')[0]}
                 </div>
               ))}
 
@@ -183,7 +184,7 @@ export default function MonthView({ events, layers, onOpen }) {
                     fontWeight:700, marginBottom:2,
                     display:'flex',alignItems:'center',gap:3,
                   }}>
-                    <span>{c.icon}</span>
+                    <EventIcon type={type} size={10} color={past ? '#94A3B8' : c.color} />
                     <span>{evts.length > 1 ? `${evts.length} ${c.label}` : evts[0].title}</span>
                   </div>
                 )

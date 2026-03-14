@@ -1,5 +1,6 @@
 import { C, EVENT_CFG } from '../../constants/tokens.js'
 import { timeStr } from '../../constants/utils.js'
+import { EventIcon } from '../icons/HumandIcons.jsx'
 
 function getTimeUntil(startH) {
   const now = new Date()
@@ -33,8 +34,8 @@ export default function UpCard({ event, onJoin, onOpen }) {
       }}
     >
       {/* Icon */}
-      <div style={{width:42,height:42,borderRadius:12,background:c.bg,display:'flex',alignItems:'center',justifyContent:'center',fontSize:19,flexShrink:0}}>
-        {c.icon}
+      <div style={{width:42,height:42,borderRadius:12,background:c.bg,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+        <EventIcon type={event.type} size={20} color={c.color} />
       </div>
 
       {/* Content */}

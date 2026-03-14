@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { C, TODAY } from '../../constants/tokens.js'
 import { EVENT_CFG } from '../../constants/tokens.js'
+import { EventIcon, IconLivestream } from '../icons/HumandIcons.jsx'
 
 /* ── Mini calendar ── */
 export function MiniCal() {
@@ -73,7 +74,10 @@ export function SidebarLives({ events, onJoin }) {
             onMouseLeave={ev => ev.currentTarget.style.opacity='1'}
           >
             <p style={{fontSize:11,fontWeight:700,color:c.color,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{e.title}</p>
-            <p style={{fontSize:9,color:C.gray400,marginTop:2}}>📡 {e.liveUrl}</p>
+            <div style={{display:'flex',alignItems:'center',gap:4,marginTop:2}}>
+              <IconLivestream size={10} color={C.gray400} />
+              <span style={{fontSize:9,color:C.gray400}}>{e.liveUrl}</span>
+            </div>
             <button className="btn"
               onClick={ev => { ev.stopPropagation(); onJoin(e) }}
               style={{
@@ -178,10 +182,13 @@ export function LayerToggle({ layers, toggle }) {
               background: l.on ? c.color : '#CBD5E1',
               flexShrink:0, transition:'all .15s',
             }}/>
-            <span style={{
-              fontSize:11, flex:1, transition:'all .15s',
-              color: l.on ? c.color : C.gray400,
-            }}>{c.icon} {c.label}</span>
+            <div style={{display:'flex',alignItems:'center',gap:6,flex:1}}>
+              <EventIcon type={l.key} size={14} color={l.on ? c.color : C.gray400} />
+              <span style={{
+                fontSize:11, transition:'all .15s',
+                color: l.on ? c.color : C.gray400,
+              }}>{c.label}</span>
+            </div>
             {/* Toggle switch */}
             <div style={{
               width:30, height:16, borderRadius:20,

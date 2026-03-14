@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { C, EVENT_CFG } from '../../constants/tokens.js'
+import { EventIcon } from '../icons/HumandIcons.jsx'
 
 export default function CultureCard({ event, onOpen, onToast }) {
   const [done, setDone] = useState(false)
@@ -24,7 +25,9 @@ export default function CultureCard({ event, onOpen, onToast }) {
       display:'flex', alignItems:'center', gap:10,
       marginBottom:8,
     }}>
-      <span style={{fontSize:22}}>{c.icon}</span>
+      <div style={{width:36,height:36,borderRadius:10,background:'#fff',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+        <EventIcon type={event.type} size={18} color={c.color} />
+      </div>
       <div style={{flex:1}}>
         <p style={{fontSize:12,fontWeight:700,color:c.color}}>{event.title}</p>
         <p style={{fontSize:11,color:C.gray500,marginTop:1}}>{event.desc}</p>

@@ -1,6 +1,7 @@
 import { C, WEEK_DAYS, HOURS, TODAY, EVENT_CFG } from '../../constants/tokens.js'
 import { sameDay, timeStr } from '../../constants/utils.js'
 import { Chip } from '../layout/Atoms.jsx'
+import { EventIcon, IconVacacion } from '../icons/HumandIcons.jsx'
 
 const now = new Date()
 
@@ -93,7 +94,7 @@ export default function WeekView({ weekDates, events, layers, onOpen, onJoin }) 
                     opacity: past ? 0.55 : 1,
                     overflow:'hidden', whiteSpace:'nowrap', textOverflow:'ellipsis',
                   }}>
-                  <span>{c.icon}</span>
+                  <EventIcon type={e.type} size={10} color={past ? '#94A3B8' : c.color} />
                   <span style={{overflow:'hidden',textOverflow:'ellipsis'}}>{e.title || e.person}</span>
                 </div>
               )
@@ -134,7 +135,7 @@ export default function WeekView({ weekDates, events, layers, onOpen, onJoin }) 
                   overflow:'hidden', whiteSpace:'nowrap',
                   zIndex:1,
                 }}>
-                <span>🏖️</span>
+                <IconVacacion size={11} color={past ? '#94A3B8' : c.color} />
                 <span style={{overflow:'hidden',textOverflow:'ellipsis'}}>{bar.title}</span>
               </div>
             )
@@ -178,7 +179,7 @@ export default function WeekView({ weekDates, events, layers, onOpen, onJoin }) 
                           marginBottom:2, opacity: past ? 0.55 : 1,
                           cursor:'pointer',
                         }}>
-                        <span style={{flexShrink:0}}>{c.icon}</span>
+                        <EventIcon type={e.type} size={11} color={past ? '#94A3B8' : c.color} />
                         <span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',flex:1}}>{e.title}</span>
                         {e.live && !past && <span style={{color:C.danger,fontSize:8,fontWeight:800,flexShrink:0}}>●</span>}
                       </div>
