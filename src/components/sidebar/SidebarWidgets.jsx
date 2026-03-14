@@ -123,9 +123,9 @@ export function SidebarAgenda({ events, onOpen, onJoin, onToast }) {
   const now = new Date()
   const currentHour = now.getHours() + now.getMinutes() / 60
 
-  // Todos los eventos del dia, ordenados por hora (allDay primero, luego por startH)
+  // Eventos del dia (sin cumpleanos ni aniversarios - esos van en Celebraciones)
   const sorted = events
-    .filter(e => e.day === today)
+    .filter(e => e.day === today && e.type !== 'cumpleanos' && e.type !== 'aniversario')
     .sort((a,b) => {
       if (a.allDay && !b.allDay) return -1
       if (!a.allDay && b.allDay) return 1
@@ -154,25 +154,6 @@ export function SidebarAgenda({ events, onOpen, onJoin, onToast }) {
           }}
         >
           Unirse
-        </button>
-      )
-    }
-
-    // Cumpleanos/Aniversario - Felicitar
-    if ((e.type === 'cumpleanos' || e.type === 'aniversario') && e.allDay) {
-      return (
-        <button
-          onClick={(ev) => { 
-            ev.stopPropagation()
-            if (onToast) onToast('Felicitacion enviada', null, C.success)
-          }}
-          style={{
-            background:c.color, color:'#fff', border:'none',
-            borderRadius:6, padding:'4px 8px', fontSize:9, fontWeight:600,
-            cursor:'pointer', flexShrink:0,
-          }}
-        >
-          Felicitar
         </button>
       )
     }

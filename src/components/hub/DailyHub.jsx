@@ -1,7 +1,7 @@
 import { C, TODAY } from '../../constants/tokens.js'
 import { ALL_EVENTS, ROLE_DATA } from '../../constants/data.js'
 import UpCard from './UpCard.jsx'
-import CultureCard from './CultureCard.jsx'
+import CelebrationSection from './CelebrationSection.jsx'
 import TeamGrid from './TeamGrid.jsx'
 import CompanyPanel from './CompanyPanel.jsx'
 
@@ -36,16 +36,9 @@ export default function DailyHub({ role, onEventOpen, onLiveJoin, setView, onToa
         )}
       </div>
 
-      {/* Cumpleaños y aniversarios - solo si hay */}
+      {/* Celebraciones del equipo - cumpleanos y aniversarios */}
       {cultureToday.length > 0 && (
-        <div style={{marginBottom:24}}>
-          <h2 style={{fontSize:16, fontWeight:600, color:C.gray900, marginBottom:12}}>
-            Celebraciones del equipo
-          </h2>
-          {cultureToday.map(e => (
-            <CultureCard key={e.id} event={e} onOpen={onEventOpen} onToast={onToast} />
-          ))}
-        </div>
+        <CelebrationSection events={cultureToday} onOpen={onEventOpen} onToast={onToast} />
       )}
 
       {role === 'manager' && <TeamGrid />}
